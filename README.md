@@ -12,19 +12,26 @@ human reviewer, while recording decisions and audit events.
 
 ## How it works
 
+
 ```mermaid
 flowchart TD
-    A[JSON request to n8n Webhook] --> B[FastAPI compares PO and quote]
-    B --> C{Request state}
-    C -->|VALIDATED| D[Complete without approval]
-    C -->|APPROVAL_PENDING| E[Human approval form]
-    E --> F{Decision}
-    F -->|APPROVED| G[Persist decision and audit event]
-    F -->|REJECTED| G
-    C -->|ALREADY_DECIDED| H[Complete without repeat approval]
-    C -->|Unexpected state| I[Stop with error]
-    B -->|HTTP 422 or 409| J[Stop with API error]
+    A["n8n Webhook: Receive JSON request"] --> B["FastAPI: Validate and compare documents"]
+    B --> C{"Request state"}
+
+    C -->|VALIDATED| D["Complete without approval"]
+    C -->|APPROVAL_PENDING| E["n8n: Human approval form"]
+    C -->|ALREADY_DECIDED| F["Complete without duplicate review"]
+    C -->|Unexpected state| G["Stop with state error"]
+
+    E --> H{"Reviewer decision"}
+    H -->|APPROVED| I["Save decision and audit event"]
+    H -->|REJECTED| I
+
+    I --> J["SQLite database"]
+
+    B -->|HTTP 422 or 409| K["Stop with API error"]
 ```
+
 
 **Two workflows were built during development:** an initial manual prototype
 (`QuoteFlow - Quote Validation`) proved the approval loop; **the published
