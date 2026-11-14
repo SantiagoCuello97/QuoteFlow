@@ -1,0 +1,4 @@
+# Runtime dependencies for the FastAPI backend (Python 3.12+).
+fastapi>=0.115,<1
+pydantic>=2.8,<3
+uvicorn>=0.30,<1

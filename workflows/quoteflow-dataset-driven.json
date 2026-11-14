@@ -1,0 +1,340 @@
+{
+  "name": "QuoteFlow - Dataset Driven",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8000/requests",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Request-ID",
+              "value": "={{ $json.body.request_id }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.body.payload }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -16,
+        112
+      ],
+      "id": "1d37161d-ce9b-4d39-8164-afb5e72ffa37",
+      "name": "Create and Validate Quote",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.state }}",
+                    "rightValue": "VALIDATED",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "131b12e7-0a2d-4867-beb6-9b956598247e"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "VALIDATED"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "id": "bdf81ee7-dd84-4095-a975-7e6983ea6ae1",
+                    "leftValue": "={{ $json.state }}",
+                    "rightValue": "APPROVAL_PENDING",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "APPROVAL_PENDING"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "id": "50489183-f14d-40c0-86f3-6752ed0ca2ed",
+                    "leftValue": "={{ $json.state }}",
+                    "rightValue": "^(APPROVED|REJECTED)$",
+                    "operator": {
+                      "type": "string",
+                      "operation": "regex"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ALREADY_DECIDED"
+            }
+          ]
+        },
+        "looseTypeValidation": "={{ false }}",
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.5,
+      "position": [
+        240,
+        -64
+      ],
+      "id": "f9848d13-5d05-4c1d-af10-cedb148bca69",
+      "name": "Route Request State"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ecb05f63-13a4-4881-b564-f183082c5713",
+              "name": "approval_url",
+              "value": "={{ $execution.resumeFormUrl }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        544,
+        -48
+      ],
+      "id": "b44238be-d600-421c-9392-a45a3f153c66",
+      "name": "Prepare Approval Form"
+    },
+    {
+      "parameters": {
+        "resume": "form",
+        "formTitle": "QuoteFlow - Human Approval",
+        "formDescription": "Review the quotation discrepancy and submit your decision.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Decision",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "APPROVED"
+                  },
+                  {
+                    "option": "REJECTED"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Reviewer",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        768,
+        -48
+      ],
+      "id": "5c568c9d-b69e-442b-bf40-a67bc4b5cd2a",
+      "name": "Wait for Human Decision",
+      "webhookId": "25dfa63d-dbaf-423b-ad9f-7d71766d6180"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'http://127.0.0.1:8000/requests/' + $('Prepare Approval Form').first().json.request_id + '/decision' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "decision",
+              "value": "={{ $json.Decision.trim() }}"
+            },
+            {
+              "name": "actor",
+              "value": "={{ $json.Reviewer.trim() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        976,
+        -48
+      ],
+      "id": "be335602-a72e-4120-a472-7b0e77ee6b60",
+      "name": "Save Approval Decision"
+    },
+    {
+      "parameters": {
+        "errorMessage": "= {{ 'Unexpected QuoteFlow state: ' + $json.state + ' | Request: ' + $json.request_id }}"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        544,
+        144
+      ],
+      "id": "418f4c80-5d0c-4edf-917f-bdd23941ebea",
+      "name": "Fail Unexpected State"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "quoteflow-intake",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        -240,
+        112
+      ],
+      "id": "af80f1f5-566f-4192-b99e-8312d76ff64e",
+      "name": "Receive Quote Request",
+      "webhookId": "e8d20108-6c02-4475-b26e-c13937db950f"
+    },
+    {
+      "parameters": {
+        "errorMessage": "= {{ 'QuoteFlow API error: ' + ($json.error?.message || $json.message || 'Request failed') }}"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        240,
+        272
+      ],
+      "id": "faecbad2-0b6d-49dd-93ba-093aca6a254d",
+      "name": "Fail API Request"
+    }
+  ],
+  "connections": {
+    "Create and Validate Quote": {
+      "main": [
+        [
+          {
+            "node": "Route Request State",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fail API Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Approval Form": {
+      "main": [
+        [
+          {
+            "node": "Wait for Human Decision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Human Decision": {
+      "main": [
+        [
+          {
+            "node": "Save Approval Decision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Request State": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Prepare Approval Form",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [],
+        [
+          {
+            "node": "Fail Unexpected State",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Receive Quote Request": {
+      "main": [
+        [
+          {
+            "node": "Create and Validate Quote",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "active": false
+}

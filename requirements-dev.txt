@@ -1,0 +1,4 @@
+-r requirements.txt
+# Testing dependencies; not needed by the running API.
+pytest>=8,<10
+httpx>=0.27,<1

@@ -1,0 +1,406 @@
+[
+  {
+    "request_id": "QF-SYN-001",
+    "description": "Matching documents",
+    "expected_http_status": 200,
+    "expected_state": "VALIDATED",
+    "expected_issues": [],
+    "payload": {
+      "purchase_order": {
+        "document_id": "PO-SYN-001",
+        "supplier": "TechSupply Argentina",
+        "currency": "USD",
+        "items": [
+          {
+            "sku": "LAPTOP-001",
+            "quantity": 5,
+            "unit_price": "800.00"
+          },
+          {
+            "sku": "MONITOR-001",
+            "quantity": 10,
+            "unit_price": "200.00"
+          }
+        ]
+      },
+      "quote": {
+        "document_id": "QT-SYN-001",
+        "supplier": "TechSupply Argentina",
+        "currency": "USD",
+        "items": [
+          {
+            "sku": "LAPTOP-001",
+            "quantity": 5,
+            "unit_price": "800.00"
+          },
+          {
+            "sku": "MONITOR-001",
+            "quantity": 10,
+            "unit_price": "200.00"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "request_id": "QF-SYN-002",
+    "description": "Higher laptop price",
+    "expected_http_status": 200,
+    "expected_state": "APPROVAL_PENDING",
+    "expected_issues": [
+      "PRICE_MISMATCH:LAPTOP-001"
+    ],
+    "payload": {
+      "purchase_order": {
+        "document_id": "PO-SYN-002",
+        "supplier": "TechSupply Argentina",
+        "currency": "USD",
+        "items": [
+          {
+            "sku": "LAPTOP-001",
+            "quantity": 5,
+            "unit_price": "800.00"
+          },
+          {
+            "sku": "MONITOR-001",
+            "quantity": 10,
+            "unit_price": "200.00"
+          }
+        ]
+      },
+      "quote": {
+        "document_id": "QT-SYN-002",
+        "supplier": "TechSupply Argentina",
+        "currency": "USD",
+        "items": [
+          {
+            "sku": "LAPTOP-001",
+            "quantity": 5,
+            "unit_price": "850.00"
+          },
+          {
+            "sku": "MONITOR-001",
+            "quantity": 10,
+            "unit_price": "200.00"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "request_id": "QF-SYN-003",
+    "description": "Different monitor quantity",
+    "expected_http_status": 200,
+    "expected_state": "APPROVAL_PENDING",
+    "expected_issues": [
+      "QUANTITY_MISMATCH:MONITOR-001"
+    ],
+    "payload": {
+      "purchase_order": {
+        "document_id": "PO-SYN-003",
+        "supplier": "TechSupply Argentina",
+        "currency": "USD",
+        "items": [
+          {
+            "sku": "LAPTOP-001",
+            "quantity": 5,
+            "unit_price": "800.00"
+          },
+          {
+            "sku": "MONITOR-001",
+            "quantity": 10,
+            "unit_price": "200.00"
+          }
+        ]
+      },
+      "quote": {
+        "document_id": "QT-SYN-003",
+        "supplier": "TechSupply Argentina",
+        "currency": "USD",
+        "items": [
+          {
+            "sku": "LAPTOP-001",
+            "quantity": 5,
+            "unit_price": "800.00"
+          },
+          {
+            "sku": "MONITOR-001",
+            "quantity": 9,
+            "unit_price": "200.00"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "request_id": "QF-SYN-004",
+    "description": "Missing monitor",
+    "expected_http_status": 200,
+    "expected_state": "APPROVAL_PENDING",
+    "expected_issues": [
+      "MISSING_ITEM:MONITOR-001"
+    ],
+    "payload": {
+      "purchase_order": {
+        "document_id": "PO-SYN-004",
+        "supplier": "TechSupply Argentina",
+        "currency": "USD",
+        "items": [
+          {
+            "sku": "LAPTOP-001",
+            "quantity": 5,
+            "unit_price": "800.00"
+          },
+          {
+            "sku": "MONITOR-001",
+            "quantity": 10,
+            "unit_price": "200.00"
+          }
+        ]
+      },
+      "quote": {
+        "document_id": "QT-SYN-004",
+        "supplier": "TechSupply Argentina",
+        "currency": "USD",
+        "items": [
+          {
+            "sku": "LAPTOP-001",
+            "quantity": 5,
+            "unit_price": "800.00"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "request_id": "QF-SYN-005",
+    "description": "Unexpected docking station",
+    "expected_http_status": 200,
+    "expected_state": "APPROVAL_PENDING",
+    "expected_issues": [
+      "UNEXPECTED_ITEM:DOCK-001"
+    ],
+    "payload": {
+      "purchase_order": {
+        "document_id": "PO-SYN-005",
+        "supplier": "TechSupply Argentina",
+        "currency": "USD",
+        "items": [
+          {
+            "sku": "LAPTOP-001",
+            "quantity": 5,
+            "unit_price": "800.00"
+          },
+          {
+            "sku": "MONITOR-001",
+            "quantity": 10,
+            "unit_price": "200.00"
+          }
+        ]
+      },
+      "quote": {
+        "document_id": "QT-SYN-005",
+        "supplier": "TechSupply Argentina",
+        "currency": "USD",
+        "items": [
+          {
+            "sku": "LAPTOP-001",
+            "quantity": 5,
+            "unit_price": "800.00"
+          },
+          {
+            "sku": "MONITOR-001",
+            "quantity": 10,
+            "unit_price": "200.00"
+          },
+          {
+            "sku": "DOCK-001",
+            "quantity": 2,
+            "unit_price": "150.00"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "request_id": "QF-SYN-006",
+    "description": "Supplier mismatch",
+    "expected_http_status": 200,
+    "expected_state": "APPROVAL_PENDING",
+    "expected_issues": [
+      "SUPPLIER_MISMATCH"
+    ],
+    "payload": {
+      "purchase_order": {
+        "document_id": "PO-SYN-006",
+        "supplier": "TechSupply Argentina",
+        "currency": "USD",
+        "items": [
+          {
+            "sku": "LAPTOP-001",
+            "quantity": 5,
+            "unit_price": "800.00"
+          },
+          {
+            "sku": "MONITOR-001",
+            "quantity": 10,
+            "unit_price": "200.00"
+          }
+        ]
+      },
+      "quote": {
+        "document_id": "QT-SYN-006",
+        "supplier": "Alternative Supplier",
+        "currency": "USD",
+        "items": [
+          {
+            "sku": "LAPTOP-001",
+            "quantity": 5,
+            "unit_price": "800.00"
+          },
+          {
+            "sku": "MONITOR-001",
+            "quantity": 10,
+            "unit_price": "200.00"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "request_id": "QF-SYN-007",
+    "description": "Currency mismatch",
+    "expected_http_status": 200,
+    "expected_state": "APPROVAL_PENDING",
+    "expected_issues": [
+      "CURRENCY_MISMATCH"
+    ],
+    "payload": {
+      "purchase_order": {
+        "document_id": "PO-SYN-007",
+        "supplier": "TechSupply Argentina",
+        "currency": "USD",
+        "items": [
+          {
+            "sku": "LAPTOP-001",
+            "quantity": 5,
+            "unit_price": "800.00"
+          },
+          {
+            "sku": "MONITOR-001",
+            "quantity": 10,
+            "unit_price": "200.00"
+          }
+        ]
+      },
+      "quote": {
+        "document_id": "QT-SYN-007",
+        "supplier": "TechSupply Argentina",
+        "currency": "EUR",
+        "items": [
+          {
+            "sku": "LAPTOP-001",
+            "quantity": 5,
+            "unit_price": "800.00"
+          },
+          {
+            "sku": "MONITOR-001",
+            "quantity": 10,
+            "unit_price": "200.00"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "request_id": "QF-SYN-008",
+    "description": "Invalid quantity",
+    "expected_http_status": 422,
+    "expected_state": null,
+    "expected_issues": [],
+    "payload": {
+      "purchase_order": {
+        "document_id": "PO-SYN-008",
+        "supplier": "TechSupply Argentina",
+        "currency": "USD",
+        "items": [
+          {
+            "sku": "LAPTOP-001",
+            "quantity": 5,
+            "unit_price": "800.00"
+          },
+          {
+            "sku": "MONITOR-001",
+            "quantity": 10,
+            "unit_price": "200.00"
+          }
+        ]
+      },
+      "quote": {
+        "document_id": "QT-SYN-008",
+        "supplier": "TechSupply Argentina",
+        "currency": "USD",
+        "items": [
+          {
+            "sku": "LAPTOP-001",
+            "quantity": 0,
+            "unit_price": "800.00"
+          },
+          {
+            "sku": "MONITOR-001",
+            "quantity": 10,
+            "unit_price": "200.00"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "request_id": "QF-SYN-009",
+    "description": "Duplicate SKU",
+    "expected_http_status": 422,
+    "expected_state": null,
+    "expected_issues": [],
+    "payload": {
+      "purchase_order": {
+        "document_id": "PO-SYN-009",
+        "supplier": "TechSupply Argentina",
+        "currency": "USD",
+        "items": [
+          {
+            "sku": "LAPTOP-001",
+            "quantity": 5,
+            "unit_price": "800.00"
+          },
+          {
+            "sku": "MONITOR-001",
+            "quantity": 10,
+            "unit_price": "200.00"
+          }
+        ]
+      },
+      "quote": {
+        "document_id": "QT-SYN-009",
+        "supplier": "TechSupply Argentina",
+        "currency": "USD",
+        "items": [
+          {
+            "sku": "LAPTOP-001",
+            "quantity": 5,
+            "unit_price": "800.00"
+          },
+          {
+            "sku": "MONITOR-001",
+            "quantity": 10,
+            "unit_price": "200.00"
+          },
+          {
+            "sku": "LAPTOP-001",
+            "quantity": 5,
+            "unit_price": "800.00"
+          }
+        ]
+      }
+    }
+  }
+]
