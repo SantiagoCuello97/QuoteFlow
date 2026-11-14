@@ -33,6 +33,12 @@ flowchart TD
 ```
 
 
+### Actual n8n workflow
+
+![QuoteFlow n8n workflow](docs/images/quoteflow-n8n-workflow.png)
+
+*The dataset-driven workflow with state routing, human approval, and explicit error handling.*
+
 **Two workflows were built during development:** an initial manual prototype
 (`QuoteFlow - Quote Validation`) proved the approval loop; **the published
 `Dataset Driven` workflow** accepts arbitrary structured input and is the
